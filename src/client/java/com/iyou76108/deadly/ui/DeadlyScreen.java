@@ -4,6 +4,7 @@ import com.iyou76108.deadly.config.ConfigManager;
 import com.iyou76108.deadly.core.Setting;
 import com.iyou76108.deadly.core.VisualModule;
 import com.iyou76108.deadly.core.VisualRegistry;
+import com.iyou76108.deadly.ui.HudEditorScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -54,6 +55,11 @@ public final class DeadlyScreen extends Screen {
         }
 
         if (activeTab.equals("Skins") || activeTab.equals("Interface") || activeTab.equals("Effects")) {
+            if (activeTab.equals("Interface")) {
+                this.addRenderableWidget(Button.builder(Component.literal("Open HUD Editor"), button ->
+                        this.minecraft.setScreen(new HudEditorScreen(this)))
+                        .bounds(this.width / 2 - 90, this.height / 2 + 20, 180, 24).build());
+            }
             addFooterButtons(left, panelWidth);
             return;
         }
@@ -142,10 +148,15 @@ public final class DeadlyScreen extends Screen {
                     this.width / 2, this.height / 2 - 7, MUTED);
             graphics.drawCenteredString(this.font, "This page is reserved for a future update.",
                     this.width / 2, this.height / 2 + 9, 0xFF718096);
-        } else if (activeTab.equals("Interface") || activeTab.equals("Effects")) {
-            graphics.drawCenteredString(this.font, activeTab.toUpperCase(Locale.ROOT),
+        } else if (activeTab.equals("Interface")) {
+            graphics.drawCenteredString(this.font, "INTERFACE TOOLS",
+                    this.width / 2, this.height / 2 - 28, 0xFFFFFFFF);
+            graphics.drawCenteredString(this.font, "Arrange HUD elements, resize them and adjust opacity.",
+                    this.width / 2, this.height / 2 - 10, MUTED);
+        } else if (activeTab.equals("Effects")) {
+            graphics.drawCenteredString(this.font, "EFFECTS",
                     this.width / 2, this.height / 2 - 16, 0xFFFFFFFF);
-            graphics.drawCenteredString(this.font, "This section is planned for a future feature pass.",
+            graphics.drawCenteredString(this.font, "Additional visual effects are planned for a future update.",
                     this.width / 2, this.height / 2 + 2, MUTED);
         } else {
             graphics.drawString(this.font, activeTab.toUpperCase(Locale.ROOT) + " MODULES",
