@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import com.iyou76108.deadly.core.Setting;
 import com.iyou76108.deadly.core.VisualModule;
 import com.iyou76108.deadly.core.VisualRegistry;
+import com.iyou76108.deadly.render.HudLayoutManager;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,10 @@ public final class ConfigManager {
                     }
                 }
             }
+
+            if (root.has("hudLayout") && root.get("hudLayout").isJsonObject()) {
+                HudLayoutManager.apply(root.getAsJsonObject("hudLayout"));
+            }
         } finally {
             applying = false;
         }
@@ -134,6 +139,7 @@ public final class ConfigManager {
         }
 
         root.add("modules", modules);
+        root.add("hudLayout", HudLayoutManager.snapshot());
         return root;
     }
 
