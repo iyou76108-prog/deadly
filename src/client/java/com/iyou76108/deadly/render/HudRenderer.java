@@ -137,9 +137,9 @@ public final class HudRenderer {
         int x = HudLayoutManager.resolveX("keystrokes", client.getWindow().getGuiScaledWidth(), 64);
         int y = HudLayoutManager.getY("keystrokes");
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(layout.scale(), layout.scale());
         drawKey(graphics, client.font, "W", 22, 0, client.options.keyUp.isDown(),
                 layout.opacity());
         drawKey(graphics, client.font, "A", 2, 20, client.options.keyLeft.isDown(),
@@ -152,7 +152,7 @@ public final class HudRenderer {
             drawKey(graphics, client.font, "JUMP", 2, 40, client.options.keyJump.isDown(),
                     layout.opacity(), 60);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     private static void drawKey(GuiGraphics graphics, Font font, String text, int x, int y,
@@ -203,14 +203,14 @@ public final class HudRenderer {
         int centerY = client.getWindow().getGuiScaledHeight() / 2 + layout.y();
         int color = withOpacity(ACCENT, layout.opacity());
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(centerX, centerY, 0);
-        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(centerX, centerY);
+        graphics.pose().scale(layout.scale(), layout.scale());
         graphics.fill(-gap - size, -thickness / 2, -gap, (thickness + 1) / 2, color);
         graphics.fill(gap, -thickness / 2, gap + size, (thickness + 1) / 2, color);
         graphics.fill(-thickness / 2, -gap - size, (thickness + 1) / 2, -gap, color);
         graphics.fill(-thickness / 2, gap, (thickness + 1) / 2, gap + size, color);
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     private static void drawPanel(GuiGraphics graphics, Font font, String id, String text) {
@@ -225,13 +225,13 @@ public final class HudRenderer {
     private static void drawPanelAt(GuiGraphics graphics, Font font, int x, int y,
                                     String text, HudLayoutManager.Widget layout) {
         int width = font.width(text) + 12;
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(layout.scale(), layout.scale());
         graphics.fill(0, 0, width, 16, withOpacity(PANEL, layout.opacity()));
         graphics.fill(0, 0, 2, 16, withOpacity(ACCENT, layout.opacity()));
         graphics.drawString(font, text, 6, 4, withOpacity(TEXT, layout.opacity()), true);
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     private static int withOpacity(int color, float opacity) {
