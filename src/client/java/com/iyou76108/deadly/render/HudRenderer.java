@@ -184,7 +184,7 @@ public final class HudRenderer {
             int width = font.width(text) + 12;
             int x;
             if (rightAligned) {
-                x = layout.x() < 0 ? screenWidth + layout.x() - width : screenWidth - width - 8;
+                x = layout.x() < 0 ? screenWidth + layout.x() - width : layout.x();
             } else {
                 x = HudLayoutManager.resolveX("module_list", screenWidth, width);
             }
