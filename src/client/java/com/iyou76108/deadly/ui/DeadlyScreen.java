@@ -67,7 +67,7 @@ public final class DeadlyScreen extends Screen {
         List<VisualModule> modules = filteredModules();
         int contentTop = 91;
         int cardWidth = (panelWidth - 12) / 2;
-        int rowHeight = 54;
+        int rowHeight = 86;
         int maxRows = Math.max(1, (this.height - 145) / rowHeight);
         int visible = Math.min(modules.size(), maxRows * 2);
 
@@ -82,16 +82,23 @@ public final class DeadlyScreen extends Screen {
                 module.toggle();
                 button.setMessage(toggleLabel(module));
                 ConfigManager.save();
-            }).bounds(x + 8, y + 6, cardWidth - 16, 20).build());
+            }).bounds(x + 8, y + 5, cardWidth - 76, 20).build());
+
+            this.addRenderableWidget(Button.builder(Component.literal("Reset"), button -> {
+                module.resetSettings();
+                ConfigManager.save();
+                this.minecraft.setScreen(new DeadlyScreen(parent, activeTab));
+            }).bounds(x + cardWidth - 60, y + 5, 52, 20).build());
 
             List<Setting<?>> settings = module.getSettings();
-            if (!settings.isEmpty()) {
-                Setting<?> setting = settings.get(0);
+            for (int settingIndex = 0; settingIndex < settings.size(); settingIndex++) {
+                Setting<?> setting = settings.get(settingIndex);
+                int settingY = y + 29 + settingIndex * 18;
                 this.addRenderableWidget(Button.builder(settingLabel(setting), button -> {
                     setting.cycle();
                     button.setMessage(settingLabel(setting));
                     ConfigManager.save();
-                }).bounds(x + 8, y + 29, cardWidth - 16, 18).build());
+                }).bounds(x + 8, settingY, cardWidth - 16, 16).build());
             }
         }
 
@@ -159,14 +166,14 @@ public final class DeadlyScreen extends Screen {
                     left + 4, 82, 0xFFFFFFFF, true);
             List<VisualModule> modules = filteredModules();
             int cardWidth = (panelWidth - 12) / 2;
-            int maxRows = Math.max(1, (this.height - 145) / 54);
+            int maxRows = Math.max(1, (this.height - 145) / 86);
             for (int i = 0; i < Math.min(modules.size(), maxRows * 2); i++) {
                 int x = left + (i % 2) * (cardWidth + 12);
-                int y = 91 + (i / 2) * 54;
-                graphics.fill(x, y, x + cardWidth, y + 51, 0xB51D2633);
-                graphics.fill(x, y, x + 2, y + 51, ACCENT);
+                int y = 91 + (i / 2) * 86;
+                graphics.fill(x, y, x + cardWidth, y + 82, 0xB51D2633);
+                graphics.fill(x, y, x + 2, y + 82, ACCENT);
                 graphics.drawString(this.font, modules.get(i).getDescription(),
-                        x + 9, y + 49 - this.font.lineHeight, MUTED, false);
+                        x + 9, y + 67, MUTED, false);
             }
             if (modules.isEmpty()) {
                 graphics.drawCenteredString(this.font, "No modules in this category yet.",
