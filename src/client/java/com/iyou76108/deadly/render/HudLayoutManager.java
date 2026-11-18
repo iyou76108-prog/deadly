@@ -36,6 +36,10 @@ public final class HudLayoutManager {
         register("armor", 8, 80);
         register("potions", 8, 98);
         register("target", 8, 116);
+        register("clock", 8, 134);
+        register("speed", 8, 152);
+        register("biome", 8, 170);
+        register("server", 8, 188);
         register("keystrokes", -12, 12);
         register("module_list", -8, 10);
         register("crosshair", 0, 0);
@@ -129,6 +133,10 @@ public final class HudLayoutManager {
             case "armor" -> new int[]{8, 80};
             case "potions" -> new int[]{8, 98};
             case "target" -> new int[]{8, 116};
+            case "clock" -> new int[]{8, 134};
+            case "speed" -> new int[]{8, 152};
+            case "biome" -> new int[]{8, 170};
+            case "server" -> new int[]{8, 188};
             case "keystrokes" -> new int[]{-12, 12};
             case "module_list" -> new int[]{-8, 10};
             default -> new int[]{0, 0};
