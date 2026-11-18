@@ -177,9 +177,13 @@ public final class HudEditorScreen extends Screen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (dragging != null && button == 0) {
-            HudLayoutManager.move(dragging,
-                    (int) Math.round(mouseX - dragOffsetX),
-                    (int) Math.round(mouseY - dragOffsetY));
+            int x = (int) Math.round(mouseX - dragOffsetX);
+            int y = (int) Math.round(mouseY - dragOffsetY);
+            if ("crosshair".equals(dragging)) {
+                HudLayoutManager.moveCrosshair(x - this.width / 2 + 9, y - this.height / 2 + 9);
+            } else {
+                HudLayoutManager.move(dragging, x, y);
+            }
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
