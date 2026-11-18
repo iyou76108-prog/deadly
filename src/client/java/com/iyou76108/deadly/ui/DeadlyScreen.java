@@ -22,7 +22,7 @@ public final class DeadlyScreen extends Screen {
     private static final int ACCENT = 0xFFE34B68;
     private static final int PANEL = 0xE8121722;
     private static final int MUTED = 0xFF9AA7B8;
-    private static final List<String> TABS = List.of("HUD", "Visuals", "Player", "Interface", "Effects", "Skins");
+    private static final List<String> TABS = List.of("HUD", "Visuals", "World", "Player", "Interface", "Effects", "Skins");
 
     private final Screen parent;
     private final String activeTab;
@@ -121,8 +121,8 @@ public final class DeadlyScreen extends Screen {
             boolean matches = switch (activeTab) {
                 case "HUD" -> module.getCategory() == VisualModule.Category.HUD;
                 case "Player" -> module.getCategory() == VisualModule.Category.PLAYER;
-                case "Visuals" -> module.getCategory() == VisualModule.Category.WORLD
-                        || module.getCategory() == VisualModule.Category.ENVIRONMENT;
+                case "Visuals" -> module.getCategory() == VisualModule.Category.ENVIRONMENT;
+                case "World" -> module.getCategory() == VisualModule.Category.WORLD;
                 default -> false;
             };
             if (matches) result.add(module);
