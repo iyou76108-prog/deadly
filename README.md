@@ -22,11 +22,12 @@ The menu opens with **Right Shift**. Changes are saved to `config/deadly/config.
 
 ## Requirements
 
-- Minecraft 1.21.11
+- Minecraft 1.21.11 and Java 21 to run the mod
 - Fabric Loader 0.20.1+
 - Fabric API 0.141.6+1.21.11
-- Java 21
-- Gradle 9.8.0+ (the included bootstrap script downloads it when no Gradle installation is found)
+- JDK 25 and Gradle 9.8.0+ to build with the current Fabric Loom version
+
+The build compiles source code with Java release 21, so the resulting mod targets the Minecraft 1.21.11 Java runtime.
 
 ## Build
 
