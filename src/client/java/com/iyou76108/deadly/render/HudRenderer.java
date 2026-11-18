@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -19,6 +20,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import java.util.List;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public final class HudRenderer {
     private static final int ACCENT = 0xFF67D7FF;
@@ -123,6 +126,46 @@ public final class HudRenderer {
                                     + String.format(java.util.Locale.ROOT, "%.1fm", distance));
                 }
             }
+        }
+
+        if (enabled("clock")) {
+            VisualModule module = VisualRegistry.get("clock");
+            boolean seconds = Boolean.TRUE.equals(module.getSetting("showSeconds").getValue());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(seconds ? "HH:mm:ss" : "HH:mm");
+            drawPanel(graphics, font, "clock", "Time: " + LocalTime.now().format(formatter));
+        }
+
+        if (enabled("speed")) {
+            VisualModule module = VisualRegistry.get("speed");
+            double speed = player.getDeltaMovement().horizontalDistance() * 20.0;
+            String value = String.format(java.util.Locale.ROOT, "Speed: %.2f",
+                    speed);
+            if (Boolean.TRUE.equals(module.getSetting("showUnit").getValue())) value += " m/s";
+            drawPanel(graphics, font, "speed", value);
+        }
+
+        if (enabled("biome")) {
+            VisualModule module = VisualRegistry.get("biome");
+            String biomeName = client.level.getBiome(player.blockPosition()).unwrapKey()
+                    .map(key -> key.identifier().getPath()).orElse("unknown");
+            if (Boolean.TRUE.equals(module.getSetting("replaceUnderscores").getValue())) {
+                biomeName = biomeName.replace('_', ' ');
+            }
+            drawPanel(graphics, font, "biome", "Biome: " + biomeName);
+        }
+
+        if (enabled("server")) {
+            VisualModule module = VisualRegistry.get("server");
+            ServerData currentServer = client.getCurrentServer();
+            String serverName;
+            if (currentServer == null) {
+                serverName = "Singleplayer";
+            } else if (Boolean.TRUE.equals(module.getSetting("showAddress").getValue())) {
+                serverName = currentServer.ip;
+            } else {
+                serverName = currentServer.name;
+            }
+            drawPanel(graphics, font, "server", "Server: " + serverName);
         }
 
         if (enabled("keystrokes")) renderKeystrokes(graphics, client);
