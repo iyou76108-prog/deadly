@@ -36,7 +36,7 @@ public final class HudLayoutManager {
         register("armor", 8, 80);
         register("potions", 8, 98);
         register("target", 8, 116);
-        register("keystrokes", -76, 12);
+        register("keystrokes", -12, 12);
         register("module_list", -8, 10);
         register("crosshair", 0, 0);
         load();
@@ -121,7 +121,7 @@ public final class HudLayoutManager {
             case "armor" -> new int[]{8, 80};
             case "potions" -> new int[]{8, 98};
             case "target" -> new int[]{8, 116};
-            case "keystrokes" -> new int[]{-76, 12};
+            case "keystrokes" -> new int[]{-12, 12};
             case "module_list" -> new int[]{-8, 10};
             default -> new int[]{0, 0};
         };
