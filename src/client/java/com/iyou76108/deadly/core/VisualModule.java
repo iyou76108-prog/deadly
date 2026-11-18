@@ -30,6 +30,7 @@ public class VisualModule {
     private final String description;
     private final Category category;
     private final List<Setting<?>> settings = new ArrayList<>();
+    private final boolean defaultEnabled;
     private boolean enabled;
     private Runnable changeListener = () -> { };
 
@@ -38,6 +39,7 @@ public class VisualModule {
         this.name = name;
         this.description = description;
         this.category = category;
+        this.defaultEnabled = defaultEnabled;
         this.enabled = defaultEnabled;
     }
 
@@ -94,6 +96,13 @@ public class VisualModule {
 
     public void toggle() {
         setEnabled(!enabled);
+    }
+
+    public void resetSettings() {
+        for (Setting<?> setting : settings) {
+            setting.reset();
+        }
+        setEnabled(defaultEnabled);
     }
 
     public List<Setting<?>> getSettings() {
