@@ -2,6 +2,7 @@ package com.iyou76108.deadly.ui;
 
 import com.iyou76108.deadly.render.HudLayoutManager;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -133,16 +134,16 @@ public final class HudEditorScreen extends Screen {
         graphics.fill(x, y, x + scaledWidth, y + scaledHeight, background);
         graphics.renderOutline(x, y, scaledWidth, scaledHeight, outline);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(scale, scale, 1.0f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(scale, scale);
         if (id.equals("crosshair")) {
             graphics.fill(7, 2, 11, 16, 0xFFE34B68);
             graphics.fill(2, 7, 16, 11, 0xFFE34B68);
         } else {
             graphics.drawString(this.font, text, 6, 5, 0xFFFFFFFF, true);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
 
         bounds.add(new WidgetBounds(id, x, y, scaledWidth, scaledHeight));
     }
@@ -156,10 +157,12 @@ public final class HudEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) return true;
-        if (button != 0) return false;
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubleClick) {
+        if (super.mouseClicked(click, doubleClick)) return true;
+        if (click.button() != 0) return false;
 
+        double mouseX = click.x();
+        double mouseY = click.y();
         for (int i = bounds.size() - 1; i >= 0; i--) {
             WidgetBounds item = bounds.get(i);
             if (mouseX >= item.x && mouseX <= item.x + item.width
@@ -175,8 +178,10 @@ public final class HudEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (dragging != null && button == 0) {
+    public boolean mouseDragged(MouseButtonEvent click, double dragX, double dragY) {
+        if (dragging != null && click.button() == 0) {
+            double mouseX = click.x() + dragX;
+            double mouseY = click.y() + dragY;
             int x = (int) Math.round(mouseX - dragOffsetX);
             int y = (int) Math.round(mouseY - dragOffsetY);
             if ("crosshair".equals(dragging)) {
@@ -186,17 +191,17 @@ public final class HudEditorScreen extends Screen {
             }
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(click, dragX, dragY);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (dragging != null) {
             dragging = null;
             HudLayoutManager.save();
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
