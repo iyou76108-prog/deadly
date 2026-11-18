@@ -1,6 +1,7 @@
 package com.iyou76108.deadly.ui;
 
 import com.iyou76108.deadly.render.HudLayoutManager;
+import com.iyou76108.deadly.config.ConfigManager;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.Button;
@@ -72,6 +73,7 @@ public final class HudEditorScreen extends Screen {
                     default -> onClose();
                 }
                 HudLayoutManager.save();
+                ConfigManager.save();
             }).bounds(x, this.height - 31, buttonWidth, 20).build());
         }
     }
@@ -203,6 +205,7 @@ public final class HudEditorScreen extends Screen {
         if (dragging != null) {
             dragging = null;
             HudLayoutManager.save();
+            ConfigManager.save();
             return true;
         }
         return super.mouseReleased(click);
@@ -213,6 +216,7 @@ public final class HudEditorScreen extends Screen {
         if (selected != null && scrollY != 0) {
             HudLayoutManager.adjustScale(selected, scrollY > 0 ? 0.05f : -0.05f);
             HudLayoutManager.save();
+            ConfigManager.save();
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -221,6 +225,7 @@ public final class HudEditorScreen extends Screen {
     @Override
     public void onClose() {
         HudLayoutManager.save();
+        ConfigManager.save();
         this.minecraft.setScreen(parent);
     }
 
