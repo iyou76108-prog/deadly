@@ -54,7 +54,7 @@ public final class DeadlyScreen extends Screen {
                     .build());
         }
 
-        if (activeTab.equals("Skins") || activeTab.equals("Interface") || activeTab.equals("Effects")) {
+        if (activeTab.equals("Skins") || activeTab.equals("Interface")) {
             if (activeTab.equals("Interface")) {
                 this.addRenderableWidget(Button.builder(Component.literal("Open HUD Editor"), button ->
                         this.minecraft.setScreen(new HudEditorScreen(this)))
@@ -123,6 +123,7 @@ public final class DeadlyScreen extends Screen {
                 case "Player" -> module.getCategory() == VisualModule.Category.PLAYER;
                 case "Visuals" -> module.getCategory() == VisualModule.Category.ENVIRONMENT;
                 case "World" -> module.getCategory() == VisualModule.Category.WORLD;
+                case "Effects" -> module.getCategory() == VisualModule.Category.EFFECTS;
                 default -> false;
             };
             if (matches) result.add(module);
@@ -153,11 +154,6 @@ public final class DeadlyScreen extends Screen {
                     this.width / 2, this.height / 2 - 28, 0xFFFFFFFF);
             graphics.drawCenteredString(this.font, "Arrange HUD elements, resize them and adjust opacity.",
                     this.width / 2, this.height / 2 - 10, MUTED);
-        } else if (activeTab.equals("Effects")) {
-            graphics.drawCenteredString(this.font, "EFFECTS",
-                    this.width / 2, this.height / 2 - 16, 0xFFFFFFFF);
-            graphics.drawCenteredString(this.font, "Additional visual effects are planned for a future update.",
-                    this.width / 2, this.height / 2 + 2, MUTED);
         } else {
             graphics.drawString(this.font, activeTab.toUpperCase(Locale.ROOT) + " MODULES",
                     left + 4, 82, 0xFFFFFFFF, true);
