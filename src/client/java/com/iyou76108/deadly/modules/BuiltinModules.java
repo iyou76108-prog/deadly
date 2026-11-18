@@ -86,5 +86,33 @@ public final class BuiltinModules {
         );
         gamma.addDecimal("brightness", "Brightness", 1.0, 0.5, 1.0, 0.1);
         VisualRegistry.register(gamma);
+
+        VisualModule clock = new VisualModule(
+                "clock", "Clock", "Displays the local system time on the HUD.",
+                VisualModule.Category.HUD, false
+        );
+        clock.addBoolean("showSeconds", "Show seconds", true);
+        VisualRegistry.register(clock);
+
+        VisualModule speed = new VisualModule(
+                "speed", "Movement Speed", "Displays horizontal movement speed in blocks per second.",
+                VisualModule.Category.PLAYER, false
+        );
+        speed.addBoolean("showUnit", "Show unit", true);
+        VisualRegistry.register(speed);
+
+        VisualModule biome = new VisualModule(
+                "biome", "Biome", "Displays the biome at your current position.",
+                VisualModule.Category.PLAYER, false
+        );
+        biome.addBoolean("replaceUnderscores", "Format biome name", true);
+        VisualRegistry.register(biome);
+
+        VisualModule server = new VisualModule(
+                "server", "Server Info", "Displays the current world or connected server.",
+                VisualModule.Category.HUD, false
+        );
+        server.addBoolean("showAddress", "Show server address", true);
+        VisualRegistry.register(server);
     }
 }
