@@ -4,6 +4,7 @@ import com.iyou76108.deadly.config.ConfigManager;
 import com.iyou76108.deadly.core.VisualRegistry;
 import com.iyou76108.deadly.modules.ClientEffects;
 import com.iyou76108.deadly.render.HudRenderer;
+import com.iyou76108.deadly.render.HudLayoutManager;
 import com.iyou76108.deadly.ui.DeadlyScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
@@ -26,6 +27,7 @@ public final class DeadlyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         VisualRegistry.registerDefaults();
+        HudLayoutManager.initialize();
         ConfigManager.initialize();
 
         KeyMapping.Category category = KeyMapping.Category.register(
