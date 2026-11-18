@@ -168,6 +168,24 @@ public final class HudRenderer {
             drawPanel(graphics, font, "server", "Server: " + serverName);
         }
 
+        if (enabled("low_health_vignette")) {
+            VisualModule vignette = VisualRegistry.get("low_health_vignette");
+            double threshold = ((Number) vignette.getSetting("threshold").getValue()).doubleValue();
+            double maximumOpacity = ((Number) vignette.getSetting("opacity").getValue()).doubleValue();
+            if (player.getHealth() < threshold) {
+                double intensity = Math.min(1.0, (threshold - player.getHealth()) / threshold);
+                int alpha = (int) Math.round(255.0 * maximumOpacity * intensity);
+                int tint = (Math.max(0, Math.min(255, alpha)) << 24) | 0xD92341;
+                int width = client.getWindow().getGuiScaledWidth();
+                int height = client.getWindow().getGuiScaledHeight();
+                int edge = Math.max(24, Math.min(96, Math.min(width, height) / 7));
+                graphics.fill(0, 0, width, edge, tint);
+                graphics.fill(0, height - edge, width, height, tint);
+                graphics.fill(0, edge, edge, height - edge, tint);
+                graphics.fill(width - edge, edge, width, height - edge, tint);
+            }
+        }
+
         if (enabled("keystrokes")) renderKeystrokes(graphics, client);
         if (enabled("module_list")) renderModuleList(graphics, font, client);
         if (enabled("crosshair")) renderCrosshair(graphics, client, VisualRegistry.get("crosshair"));
