@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public final class DeadlyClient implements ClientModInitializer {
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.deadly.open_menu",
                 InputConstants.Type.KEYSYM,
-                InputConstants.KEY_RIGHT_SHIFT,
+                GLFW.GLFW_KEY_RIGHT_SHIFT,
                 category
         ));
 

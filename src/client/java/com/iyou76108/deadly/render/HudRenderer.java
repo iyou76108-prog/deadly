@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -69,7 +70,7 @@ public final class HudRenderer {
             String position = String.format("XYZ: %d %d %d",
                     player.blockPosition().getX(), player.blockPosition().getY(), player.blockPosition().getZ());
             if (Boolean.TRUE.equals(module.getSetting("showDimension").getValue())) {
-                position += "  |  " + client.level.dimension().location().getPath();
+                position += "  |  " + client.level.dimension().identifier().getPath();
             }
             drawPanel(graphics, font, position, left, y);
             y += 18;
@@ -93,7 +94,9 @@ public final class HudRenderer {
             int equipped = 0;
             int totalDurability = 0;
             int durableItems = 0;
-            for (ItemStack stack : player.getArmorSlots()) {
+            for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                    EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+                ItemStack stack = player.getItemBySlot(slot);
                 if (!stack.isEmpty()) {
                     equipped++;
                     if (stack.getMaxDamage() > 0) {
