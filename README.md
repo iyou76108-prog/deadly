@@ -18,6 +18,7 @@ A client-side visual customization mod for Minecraft Java Edition **1.21.11** us
 - Armor count and average durability
 - Active status-effect count
 - Local clock, movement speed, biome and server information (opt-in modules)
+- Configurable low-health screen-edge vignette in the Effects category
 - Crosshair target name and distance
 - Enabled-module list
 - Adjustable custom crosshair
