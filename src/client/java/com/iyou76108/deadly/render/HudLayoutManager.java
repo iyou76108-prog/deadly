@@ -147,24 +147,47 @@ public final class HudLayoutManager {
         };
     }
 
+    public static synchronized JsonObject snapshot() {
+        JsonObject root = new JsonObject();
+        root.addProperty("schemaVersion", 1);
+        JsonObject widgets = new JsonObject();
+        for (Map.Entry<String, Widget> entry : WIDGETS.entrySet()) {
+            Widget widget = entry.getValue();
+            JsonObject data = new JsonObject();
+            data.addProperty("x", widget.x);
+            data.addProperty("y", widget.y);
+            data.addProperty("scale", widget.scale);
+            data.addProperty("opacity", widget.opacity);
+            widgets.add(entry.getKey(), data);
+        }
+        root.add("widgets", widgets);
+        return root;
+    }
+
+    public static synchronized void apply(JsonObject root) {
+        if (root == null || !root.has("widgets") || !root.get("widgets").isJsonObject()) return;
+        JsonObject widgets = root.getAsJsonObject("widgets");
+        for (Map.Entry<String, Widget> entry : WIDGETS.entrySet()) {
+            if (!widgets.has(entry.getKey()) || !widgets.get(entry.getKey()).isJsonObject()) continue;
+            JsonObject data = widgets.getAsJsonObject(entry.getKey());
+            Widget widget = entry.getValue();
+            try {
+                if (data.has("x")) widget.x = data.get("x").getAsInt();
+                if (data.has("y")) widget.y = Math.max(0, data.get("y").getAsInt());
+                if (data.has("scale")) widget.scale = clamp(data.get("scale").getAsFloat(), 0.5f, 2.0f);
+                if (data.has("opacity")) widget.opacity = clamp(data.get("opacity").getAsFloat(), 0.1f, 1.0f);
+            } catch (RuntimeException exception) {
+                LOGGER.warn("Ignoring invalid HUD layout values for '{}'", entry.getKey());
+            }
+        }
+        save();
+    }
+
     public static synchronized void save() {
         try {
             Files.createDirectories(FILE.getParent());
-            JsonObject root = new JsonObject();
-            root.addProperty("schemaVersion", 1);
-            JsonObject widgets = new JsonObject();
-            for (Map.Entry<String, Widget> entry : WIDGETS.entrySet()) {
-                Widget widget = entry.getValue();
-                JsonObject data = new JsonObject();
-                data.addProperty("x", widget.x);
-                data.addProperty("y", widget.y);
-                data.addProperty("scale", widget.scale);
-                data.addProperty("opacity", widget.opacity);
-                widgets.add(entry.getKey(), data);
-            }
-            root.add("widgets", widgets);
             try (Writer writer = Files.newBufferedWriter(FILE)) {
-                new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(root, writer);
+                new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(snapshot(), writer);
             }
         } catch (Exception exception) {
             LOGGER.error("Could not save HUD layout", exception);
@@ -177,18 +200,7 @@ public final class HudLayoutManager {
             return;
         }
         try (Reader reader = Files.newBufferedReader(FILE)) {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            if (!root.has("widgets") || !root.get("widgets").isJsonObject()) return;
-            JsonObject widgets = root.getAsJsonObject("widgets");
-            for (Map.Entry<String, Widget> entry : WIDGETS.entrySet()) {
-                if (!widgets.has(entry.getKey()) || !widgets.get(entry.getKey()).isJsonObject()) continue;
-                JsonObject data = widgets.getAsJsonObject(entry.getKey());
-                Widget widget = entry.getValue();
-                if (data.has("x")) widget.x = data.get("x").getAsInt();
-                if (data.has("y")) widget.y = data.get("y").getAsInt();
-                if (data.has("scale")) widget.scale = clamp(data.get("scale").getAsFloat(), 0.5f, 2.0f);
-                if (data.has("opacity")) widget.opacity = clamp(data.get("opacity").getAsFloat(), 0.1f, 1.0f);
-            }
+            apply(JsonParser.parseReader(reader).getAsJsonObject());
         } catch (Exception exception) {
             LOGGER.error("HUD layout is invalid; using defaults", exception);
             save();
