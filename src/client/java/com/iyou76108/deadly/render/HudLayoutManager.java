@@ -40,6 +40,10 @@ public final class HudLayoutManager {
         register("speed", 8, 152);
         register("biome", 8, 170);
         register("server", 8, 188);
+        register("clock", 8, 134);
+        register("speed", 8, 152);
+        register("biome", 8, 170);
+        register("server", 8, 188);
         register("keystrokes", -12, 12);
         register("module_list", -8, 10);
         register("crosshair", 0, 0);
@@ -119,6 +123,10 @@ public final class HudLayoutManager {
         register("armor", 8, 80);
         register("potions", 8, 98);
         register("target", 8, 116);
+        register("clock", 8, 134);
+        register("speed", 8, 152);
+        register("biome", 8, 170);
+        register("server", 8, 188);
         register("keystrokes", -76, 12);
         register("module_list", -8, 10);
         register("crosshair", 0, 0);
