@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class HudRenderer {
@@ -40,29 +39,22 @@ public final class HudRenderer {
     private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
-        if (player == null || client.level == null) {
-            return;
-        }
+        if (player == null || client.level == null) return;
 
         Font font = client.font;
-        int left = 8;
-        int y = 8;
-
         if (enabled("watermark")) {
             VisualModule module = VisualRegistry.get("watermark");
             Setting<?> showVersion = module.getSetting("showVersion");
             String value = Boolean.TRUE.equals(showVersion.getValue())
-                    ? "DEADLY VISUALS  v" + DeadlyClient.VERSION
-                    : "DEADLY VISUALS";
-            drawPanel(graphics, font, value, left, y);
-            y += 18;
+                    ? "DEADLY VISUALS  v" + DeadlyClient.VERSION : "DEADLY VISUALS";
+            drawPanel(graphics, font, "watermark", value);
         }
 
         if (enabled("fps")) {
             VisualModule module = VisualRegistry.get("fps");
             boolean label = Boolean.TRUE.equals(module.getSetting("showLabel").getValue());
-            drawPanel(graphics, font, label ? "FPS: " + client.getFps() : Integer.toString(client.getFps()), left, y);
-            y += 18;
+            drawPanel(graphics, font, "fps",
+                    label ? "FPS: " + client.getFps() : Integer.toString(client.getFps()));
         }
 
         if (enabled("coordinates")) {
@@ -72,8 +64,7 @@ public final class HudRenderer {
             if (Boolean.TRUE.equals(module.getSetting("showDimension").getValue())) {
                 position += "  |  " + client.level.dimension().identifier().getPath();
             }
-            drawPanel(graphics, font, position, left, y);
-            y += 18;
+            drawPanel(graphics, font, "coordinates", position);
         }
 
         if (enabled("direction")) {
@@ -85,8 +76,7 @@ public final class HudRenderer {
             if (Boolean.TRUE.equals(module.getSetting("showDegrees").getValue())) {
                 value += " (" + Math.round(yaw) + "°)";
             }
-            drawPanel(graphics, font, value, left, y);
-            y += 18;
+            drawPanel(graphics, font, "direction", value);
         }
 
         if (enabled("armor")) {
@@ -100,7 +90,8 @@ public final class HudRenderer {
                 if (!stack.isEmpty()) {
                     equipped++;
                     if (stack.getMaxDamage() > 0) {
-                        totalDurability += Math.max(0, 100 - (stack.getDamageValue() * 100 / stack.getMaxDamage()));
+                        totalDurability += Math.max(0,
+                                100 - (stack.getDamageValue() * 100 / stack.getMaxDamage()));
                         durableItems++;
                     }
                 }
@@ -109,15 +100,13 @@ public final class HudRenderer {
             if (Boolean.TRUE.equals(module.getSetting("showPercent").getValue()) && durableItems > 0) {
                 armorText += "  " + (totalDurability / durableItems) + "%";
             }
-            drawPanel(graphics, font, armorText, left, y);
-            y += 18;
+            drawPanel(graphics, font, "armor", armorText);
         }
 
         if (enabled("potions")) {
             VisualModule module = VisualRegistry.get("potions");
             if (Boolean.TRUE.equals(module.getSetting("showCount").getValue())) {
-                drawPanel(graphics, font, "Effects: " + player.getActiveEffects().size(), left, y);
-                y += 18;
+                drawPanel(graphics, font, "potions", "Effects: " + player.getActiveEffects().size());
             }
         }
 
@@ -129,96 +118,126 @@ public final class HudRenderer {
                 Entity target = entityHit.getEntity();
                 double distance = player.distanceTo(target);
                 if (distance <= range) {
-                    drawPanel(graphics, font,
-                            target.getName().getString() + "  " + String.format(java.util.Locale.ROOT, "%.1fm", distance),
-                            left, y);
-                    y += 18;
+                    drawPanel(graphics, font, "target",
+                            target.getName().getString() + "  "
+                                    + String.format(java.util.Locale.ROOT, "%.1fm", distance));
                 }
             }
         }
 
-        if (enabled("keystrokes")) {
-            renderKeystrokes(graphics, client);
-        }
-
-        if (enabled("module_list")) {
-            renderModuleList(graphics, font, client);
-        }
-
-        if (enabled("crosshair")) {
-            renderCrosshair(graphics, client, VisualRegistry.get("crosshair"));
-        }
+        if (enabled("keystrokes")) renderKeystrokes(graphics, client);
+        if (enabled("module_list")) renderModuleList(graphics, font, client);
+        if (enabled("crosshair")) renderCrosshair(graphics, client, VisualRegistry.get("crosshair"));
     }
 
     private static void renderKeystrokes(GuiGraphics graphics, Minecraft client) {
         VisualModule module = VisualRegistry.get("keystrokes");
-        int x = client.getWindow().getGuiScaledWidth() - 76;
-        int y = 12;
-        drawKey(graphics, client.font, "W", x + 20, y, client.options.keyUp.isDown());
-        drawKey(graphics, client.font, "A", x, y + 20, client.options.keyLeft.isDown());
-        drawKey(graphics, client.font, "S", x + 20, y + 20, client.options.keyDown.isDown());
-        drawKey(graphics, client.font, "D", x + 40, y + 20, client.options.keyRight.isDown());
-        if (Boolean.TRUE.equals(module.getSetting("showJump").getValue())) {
-            drawKey(graphics, client.font, "JUMP", x, y + 40, client.options.keyJump.isDown(), 60);
-        }
-    }
+        HudLayoutManager.Widget layout = HudLayoutManager.get("keystrokes");
+        if (layout == null) return;
+        int x = HudLayoutManager.resolveX("keystrokes", client.getWindow().getGuiScaledWidth(), 64);
+        int y = HudLayoutManager.getY("keystrokes");
 
-    private static void drawKey(GuiGraphics graphics, Font font, String text, int x, int y, boolean active) {
-        drawKey(graphics, font, text, x, y, active, 18);
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0);
+        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        drawKey(graphics, client.font, "W", 22, 0, client.options.keyUp.isDown(),
+                layout.opacity());
+        drawKey(graphics, client.font, "A", 2, 20, client.options.keyLeft.isDown(),
+                layout.opacity());
+        drawKey(graphics, client.font, "S", 22, 20, client.options.keyDown.isDown(),
+                layout.opacity());
+        drawKey(graphics, client.font, "D", 42, 20, client.options.keyRight.isDown(),
+                layout.opacity());
+        if (Boolean.TRUE.equals(module.getSetting("showJump").getValue())) {
+            drawKey(graphics, client.font, "JUMP", 2, 40, client.options.keyJump.isDown(),
+                    layout.opacity(), 60);
+        }
+        graphics.pose().popPose();
     }
 
     private static void drawKey(GuiGraphics graphics, Font font, String text, int x, int y,
-                                boolean active, int width) {
-        graphics.fill(x, y, x + width, y + 18, active ? 0xDD26749A : PANEL);
-        graphics.renderOutline(x, y, width, 18, active ? ACCENT : 0x665B6A7F);
+                                boolean active, float opacity) {
+        drawKey(graphics, font, text, x, y, active, opacity, 18);
+    }
+
+    private static void drawKey(GuiGraphics graphics, Font font, String text, int x, int y,
+                                boolean active, float opacity, int width) {
+        graphics.fill(x, y, x + width, y + 18,
+                withOpacity(active ? 0xDD26749A : PANEL, opacity));
+        graphics.renderOutline(x, y, width, 18,
+                withOpacity(active ? ACCENT : 0x665B6A7F, opacity));
         graphics.drawString(font, text, x + (width - font.width(text)) / 2,
-                y + 5, TEXT, true);
+                y + 5, withOpacity(TEXT, opacity), true);
     }
 
     private static void renderModuleList(GuiGraphics graphics, Font font, Minecraft client) {
         VisualModule listModule = VisualRegistry.get("module_list");
+        HudLayoutManager.Widget layout = HudLayoutManager.get("module_list");
+        if (layout == null) return;
         boolean rightAligned = Boolean.TRUE.equals(listModule.getSetting("rightAligned").getValue());
-        List<VisualModule> modules = new ArrayList<>();
+        int screenWidth = client.getWindow().getGuiScaledWidth();
+        int y = HudLayoutManager.getY("module_list");
+
         for (VisualModule module : VisualRegistry.all()) {
-            if (module.isEnabled() && !module.getId().equals("module_list")) {
-                modules.add(module);
-            }
-        }
-        int y = 10;
-        for (VisualModule module : modules) {
+            if (!module.isEnabled() || module.getId().equals("module_list")) continue;
             String text = module.getName();
             int width = font.width(text) + 12;
-            int x = rightAligned ? client.getWindow().getGuiScaledWidth() - width - 8 : 8;
-            graphics.fill(x, y, x + width, y + 16, PANEL);
-            graphics.fill(rightAligned ? x + width - 2 : x, y,
-                    rightAligned ? x + width : x + 2, y + 16, ACCENT);
-            graphics.drawString(font, text, x + 6, y + 4, TEXT, true);
-            y += 18;
+            int x;
+            if (rightAligned) {
+                x = layout.x() < 0 ? screenWidth + layout.x() - width : screenWidth - width - 8;
+            } else {
+                x = HudLayoutManager.resolveX("module_list", screenWidth, width);
+            }
+            drawPanelAt(graphics, font, x, y, text, layout);
+            y += Math.max(12, Math.round(18 * layout.scale()));
         }
     }
 
     private static void renderCrosshair(GuiGraphics graphics, Minecraft client, VisualModule module) {
         int size = ((Number) module.getSetting("size").getValue()).intValue();
+        HudLayoutManager.Widget layout = HudLayoutManager.get("crosshair");
+        if (layout == null) return;
         int gap = 3;
         int thickness = 2;
-        int centerX = client.getWindow().getGuiScaledWidth() / 2;
-        int centerY = client.getWindow().getGuiScaledHeight() / 2;
+        int centerX = client.getWindow().getGuiScaledWidth() / 2 + layout.x();
+        int centerY = client.getWindow().getGuiScaledHeight() / 2 + layout.y();
+        int color = withOpacity(ACCENT, layout.opacity());
 
-        graphics.fill(centerX - gap - size, centerY - thickness / 2,
-                centerX - gap, centerY + (thickness + 1) / 2, ACCENT);
-        graphics.fill(centerX + gap, centerY - thickness / 2,
-                centerX + gap + size, centerY + (thickness + 1) / 2, ACCENT);
-        graphics.fill(centerX - thickness / 2, centerY - gap - size,
-                centerX + (thickness + 1) / 2, centerY - gap, ACCENT);
-        graphics.fill(centerX - thickness / 2, centerY + gap,
-                centerX + (thickness + 1) / 2, centerY + gap + size, ACCENT);
+        graphics.pose().pushPose();
+        graphics.pose().translate(centerX, centerY, 0);
+        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        graphics.fill(-gap - size, -thickness / 2, -gap, (thickness + 1) / 2, color);
+        graphics.fill(gap, -thickness / 2, gap + size, (thickness + 1) / 2, color);
+        graphics.fill(-thickness / 2, -gap - size, (thickness + 1) / 2, -gap, color);
+        graphics.fill(-thickness / 2, gap, (thickness + 1) / 2, gap + size, color);
+        graphics.pose().popPose();
     }
 
-    private static void drawPanel(GuiGraphics graphics, Font font, String text, int x, int y) {
+    private static void drawPanel(GuiGraphics graphics, Font font, String id, String text) {
+        HudLayoutManager.Widget layout = HudLayoutManager.get(id);
+        if (layout == null) return;
         int width = font.width(text) + 12;
-        graphics.fill(x, y, x + width, y + 16, PANEL);
-        graphics.fill(x, y, x + 2, y + 16, ACCENT);
-        graphics.drawString(font, text, x + 6, y + 4, TEXT, true);
+        int screenWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int x = HudLayoutManager.resolveX(id, screenWidth, width);
+        drawPanelAt(graphics, font, x, HudLayoutManager.getY(id), text, layout);
+    }
+
+    private static void drawPanelAt(GuiGraphics graphics, Font font, int x, int y,
+                                    String text, HudLayoutManager.Widget layout) {
+        int width = font.width(text) + 12;
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0);
+        graphics.pose().scale(layout.scale(), layout.scale(), 1.0f);
+        graphics.fill(0, 0, width, 16, withOpacity(PANEL, layout.opacity()));
+        graphics.fill(0, 0, 2, 16, withOpacity(ACCENT, layout.opacity()));
+        graphics.drawString(font, text, 6, 4, withOpacity(TEXT, layout.opacity()), true);
+        graphics.pose().popPose();
+    }
+
+    private static int withOpacity(int color, float opacity) {
+        int alpha = (color >>> 24) & 0xFF;
+        int adjusted = Math.max(0, Math.min(255, Math.round(alpha * opacity)));
+        return (color & 0x00FFFFFF) | (adjusted << 24);
     }
 
     private static boolean enabled(String id) {
