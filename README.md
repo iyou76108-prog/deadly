@@ -16,7 +16,7 @@ A client-side visual customization mod for Minecraft Java Edition **1.21.11** us
 - Entity Glow outlines for nearby living entities
 - Gamma control with restoration of the previous vanilla value
 - In-game configuration menu and JSON persistence
-- Named JSON profiles (default profile controls are in the menu)
+- JSON profile persistence (default profile controls are in the menu)
 
 The menu opens with **Right Shift**. Changes are saved to `config/deadly/config.json`; profiles are stored in `config/deadly/profiles/`.
 
@@ -26,7 +26,7 @@ The menu opens with **Right Shift**. Changes are saved to `config/deadly/config.
 - Fabric Loader 0.20.1+
 - Fabric API 0.141.6+1.21.11
 - Java 21
-- Gradle 9.2.1 (the included bootstrap script downloads it when no Gradle installation is found)
+- Gradle 9.8.0+ (the included bootstrap script downloads it when no Gradle installation is found)
 
 ## Build
 

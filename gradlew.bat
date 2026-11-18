@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set GRADLE_VERSION=9.2.1
+set GRADLE_VERSION=9.8.0
 
 where gradle >nul 2>nul
 if %ERRORLEVEL%==0 (

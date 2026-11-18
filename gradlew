@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-GRADLE_VERSION="9.2.1"
+GRADLE_VERSION="9.8.0"
 if command -v gradle >/dev/null 2>&1; then
     exec gradle "$@"
 fi
