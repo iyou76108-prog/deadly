@@ -68,6 +68,10 @@ public final class Setting<T> {
         this.changeListener = changeListener == null ? () -> { } : changeListener;
     }
 
+    public void reset() {
+        setValue(defaultValue);
+    }
+
     public void setValue(T next) {
         T normalized = normalize(next);
         if (!Objects.equals(value, normalized)) {
