@@ -2,6 +2,13 @@
 
 A client-side visual customization mod for Minecraft Java Edition **1.21.11** using Fabric.
 
+## Compatibility
+
+- Minecraft 1.21.11
+- Fabric Loader 0.19.2 or newer
+- Fabric API 0.141.6+1.21.11
+- Java 21
+
 ## Current feature set
 
 - HUD watermark and FPS counter
@@ -16,20 +23,13 @@ A client-side visual customization mod for Minecraft Java Edition **1.21.11** us
 - Entity Glow outlines for nearby living entities
 - Gamma control with restoration of the previous vanilla value
 - In-game configuration menu and JSON persistence
-- JSON profile persistence (default profile controls are in the menu)
+- JSON profile persistence
 
 The menu opens with **Right Shift**. Changes are saved to `config/deadly/config.json`; profiles are stored in `config/deadly/profiles/`.
 
-## Requirements
-
-- Minecraft 1.21.11 and Java 21 to run the mod
-- Fabric Loader 0.20.1+
-- Fabric API 0.141.6+1.21.11
-- JDK 25 and Gradle 9.8.0+ to build with the current Fabric Loom version
-
-The build compiles source code with Java release 21, so the resulting mod targets the Minecraft 1.21.11 Java runtime.
-
 ## Build
+
+The included CI uses JDK 25 to run the current Fabric Loom version and compiles the mod with Java release 21.
 
 Linux/macOS:
 ```sh
@@ -41,4 +41,4 @@ Windows:
 gradlew.bat build
 ```
 
-The remapped distributable JAR is generated in `build/libs/`. A GitHub Actions workflow builds the project on pushes and pull requests.
+The remapped distributable JAR is generated in `build/libs/`.
