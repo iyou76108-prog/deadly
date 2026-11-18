@@ -11,7 +11,8 @@ public class VisualModule {
         HUD("HUD"),
         PLAYER("Player"),
         WORLD("World"),
-        ENVIRONMENT("Environment");
+        ENVIRONMENT("Environment"),
+        EFFECTS("Effects");
 
         private final String title;
 
