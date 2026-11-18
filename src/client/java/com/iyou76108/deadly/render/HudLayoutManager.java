@@ -72,6 +72,14 @@ public final class HudLayoutManager {
         widget.y = Math.max(0, y);
     }
 
+    public static void moveCrosshair(int offsetX, int offsetY) {
+        Widget widget = WIDGETS.get("crosshair");
+        if (widget != null) {
+            widget.x = offsetX;
+            widget.y = offsetY;
+        }
+    }
+
     public static void adjustScale(String id, float amount) {
         Widget widget = WIDGETS.get(id);
         if (widget != null) widget.scale = clamp(widget.scale + amount, 0.5f, 2.0f);
