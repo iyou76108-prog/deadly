@@ -114,5 +114,14 @@ public final class BuiltinModules {
         );
         server.addBoolean("showAddress", "Show server address", true);
         VisualRegistry.register(server);
+
+        VisualModule lowHealth = new VisualModule(
+                "low_health_vignette", "Low Health Vignette",
+                "Adds a subtle red screen-edge tint when health is low.",
+                VisualModule.Category.EFFECTS, false
+        );
+        lowHealth.addDecimal("threshold", "Health threshold", 8.0, 4.0, 16.0, 1.0);
+        lowHealth.addDecimal("opacity", "Maximum intensity", 0.22, 0.05, 0.5, 0.05);
+        VisualRegistry.register(lowHealth);
     }
 }
