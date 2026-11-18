@@ -19,17 +19,21 @@ public final class HudEditorScreen extends Screen {
     private static final int ACCENT = 0xFFE34B68;
     private static final int PANEL = 0xE8121722;
     private static final int MUTED = 0xFF9AA7B8;
-    private static final Map<String, String> PREVIEWS = Map.of(
-            "watermark", "DEADLY VISUALS",
-            "fps", "FPS: 144",
-            "coordinates", "XYZ: 120 64 -320",
-            "direction", "Facing: NW",
-            "armor", "Armor: 4/4  100%",
-            "potions", "Effects: 2",
-            "target", "Target: Entity  4.2m",
-            "keystrokes", "W   A   S   D",
-            "module_list", "Module List",
-            "crosshair", "+"
+    private static final Map<String, String> PREVIEWS = Map.ofEntries(
+            Map.entry("watermark", "DEADLY VISUALS"),
+            Map.entry("fps", "FPS: 144"),
+            Map.entry("coordinates", "XYZ: 120 64 -320"),
+            Map.entry("direction", "Facing: NW"),
+            Map.entry("armor", "Armor: 4/4  100%"),
+            Map.entry("potions", "Effects: 2"),
+            Map.entry("target", "Target: Entity  4.2m"),
+            Map.entry("clock", "TIME: 12:45:30"),
+            Map.entry("speed", "Speed: 4.3 m/s"),
+            Map.entry("biome", "Biome: plains"),
+            Map.entry("server", "Server: play.example.net"),
+            Map.entry("keystrokes", "W   A   S   D"),
+            Map.entry("module_list", "Module List"),
+            Map.entry("crosshair", "+")
     );
 
     private final Screen parent;
