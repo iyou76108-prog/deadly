@@ -1,48 +1,28 @@
 # Deadly Visuals
 
-A client-side visual customization mod for Minecraft Java Edition **1.21.11** using Fabric.
+A client-side Fabric visual customization mod for Minecraft 1.21.11.
 
 ## Compatibility
 
 - Minecraft 1.21.11
-- Fabric Loader 0.19.2 or newer
+- Fabric Loader 0.19.2+
 - Fabric API 0.141.6+1.21.11
-- Java 21
+- Java 21+
 
-## Current feature set
+## Features
 
-- HUD watermark and FPS counter
-- XYZ coordinates with optional dimension name
-- Compass direction with optional yaw degrees
-- Keystrokes display
-- Armor count and average durability
-- Active status-effect count
-- Local clock, movement speed, biome and server information (opt-in modules)
-- Configurable low-health screen-edge vignette in the Effects category
-- Crosshair target name and distance
-- Enabled-module list
-- Adjustable custom crosshair
-- Entity Glow outlines for nearby living entities
-- Gamma control with restoration of the previous vanilla value
-- In-game configuration menu and JSON persistence
-- Interactive HUD Editor: drag widgets, adjust scale and opacity, and reset positions
-- HUD positions, size and opacity saved in `config/deadly/hud-layout.json`
-- JSON profile persistence
+- Dark, red-accented ClickGUI (Right Shift)
+- HUD modules: watermark, FPS, coordinates, direction, armor, potion count, keystrokes, clock, speed, biome, server and enabled-module list
+- HUD editor with drag positioning, scale, opacity and layout reset
+- JSON configuration and named profiles
+- World visuals including target info, entity glow and gamma control
+- Cheats category with client-side configurable Entity Hitboxes and Entity ESP
+- Hitboxes: entity filters, range, line width, RGB color, fill opacity and through-wall option
+- ESP: entity filters, range, line width, RGB color, fill opacity, names, distance labels and through-wall highlighting
+- All modules are disabled by default; legacy v1 configurations are migrated to the all-off default
 
-The menu opens with **Right Shift**. Open the **Interface** tab and choose **Open HUD Editor** to position widgets. Drag an element to move it, use the scale/opacity controls, or scroll over a selected element to resize it. Module settings are saved to `config/deadly/config.json`; HUD layout is saved to `config/deadly/hud-layout.json`; profiles are stored in `config/deadly/profiles/`. The **Skins** tab is reserved for a later update.
+Hitboxes and ESP modify local rendering only; they do not send gameplay or combat packets. Always follow the rules of the server you play on.
 
 ## Build
 
-The included CI uses JDK 25 to run the current Fabric Loom version and compiles the mod with Java release 21.
-
-Linux/macOS:
-```sh
-./gradlew build
-```
-
-Windows:
-```bat
-gradlew.bat build
-```
-
-The remapped distributable JAR is generated in `build/libs/`.
+Run ./gradlew build. The remapped mod JAR is generated in build/libs.

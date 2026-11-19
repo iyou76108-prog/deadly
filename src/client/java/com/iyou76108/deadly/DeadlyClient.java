@@ -11,7 +11,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -19,9 +18,8 @@ import org.slf4j.LoggerFactory;
 
 public final class DeadlyClient implements ClientModInitializer {
     public static final String MOD_ID = "deadly";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.2.0";
     public static final Logger LOGGER = LoggerFactory.getLogger("Deadly Visuals");
-
     private static KeyMapping openMenuKey;
 
     @Override
@@ -34,27 +32,19 @@ public final class DeadlyClient implements ClientModInitializer {
                 Identifier.fromNamespaceAndPath(MOD_ID, "visuals")
         );
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.deadly.open_menu",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
-                category
+                "key.deadly.open_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT, category
         ));
 
         HudRenderer.register();
-
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenuKey.consumeClick()) {
-                if (client.screen == null) {
-                    client.setScreen(new DeadlyScreen(null));
-                }
+                if (client.screen == null) client.setScreen(new DeadlyScreen(null));
             }
+            VisualRegistry.tickAll(client);
             ClientEffects.tick(client);
         });
-
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null && client.level == null) {
-                ClientEffects.restore(client);
-            }
+            if (client.player == null && client.level == null) ClientEffects.restore(client);
         });
 
         LOGGER.info("Deadly Visuals {} initialized with {} registered modules.",

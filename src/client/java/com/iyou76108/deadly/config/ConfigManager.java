@@ -12,7 +12,6 @@ import com.iyou76108.deadly.render.HudLayoutManager;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -29,9 +28,7 @@ public final class ConfigManager {
     private static final Path DIRECTORY = FabricLoader.getInstance().getConfigDir().resolve("deadly");
     private static final Path CONFIG_FILE = DIRECTORY.resolve("config.json");
     private static boolean applying;
-
-    private ConfigManager() {
-    }
+    private ConfigManager() { }
 
     public static void initialize() {
         try {
@@ -41,11 +38,8 @@ public final class ConfigManager {
             LOGGER.error("Could not initialize the configuration directory", exception);
         }
     }
-
     public static synchronized void save() {
-        if (applying) {
-            return;
-        }
+        if (applying) return;
         try {
             Files.createDirectories(DIRECTORY);
             writeAtomically(CONFIG_FILE, snapshot());
@@ -53,7 +47,6 @@ public final class ConfigManager {
             LOGGER.error("Could not save Deadly Visuals configuration", exception);
         }
     }
-
     public static synchronized void saveProfile(String name) {
         Path path = profilePath(name);
         try {
@@ -63,12 +56,9 @@ public final class ConfigManager {
             LOGGER.error("Could not save profile '{}'", name, exception);
         }
     }
-
     public static synchronized boolean loadProfile(String name) {
         Path path = profilePath(name);
-        if (!Files.isRegularFile(path)) {
-            return false;
-        }
+        if (!Files.isRegularFile(path)) return false;
         try (Reader reader = Files.newBufferedReader(path)) {
             apply(JsonParser.parseReader(reader).getAsJsonObject());
             save();
@@ -78,42 +68,41 @@ public final class ConfigManager {
             return false;
         }
     }
-
     private static synchronized void load() {
         if (!Files.isRegularFile(CONFIG_FILE)) {
             save();
             return;
         }
         try (Reader reader = Files.newBufferedReader(CONFIG_FILE)) {
-            apply(JsonParser.parseReader(reader).getAsJsonObject());
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            int schemaVersion = root.has("schemaVersion") ? root.get("schemaVersion").getAsInt() : 1;
+            apply(root);
+            // Schema 1 configs predate all-off defaults. Ignore their enabled flags, then migrate once.
+            if (schemaVersion < 2) save();
         } catch (Exception exception) {
             LOGGER.error("Configuration is invalid; defaults will be used", exception);
         }
     }
-
     private static void apply(JsonObject root) {
         applying = true;
         try {
+            int schemaVersion = root.has("schemaVersion") ? root.get("schemaVersion").getAsInt() : 1;
+            boolean restoreEnabledStates = schemaVersion >= 2;
             JsonObject modules = root.has("modules") && root.get("modules").isJsonObject()
                     ? root.getAsJsonObject("modules") : new JsonObject();
-
             for (VisualModule module : VisualRegistry.all()) {
-                if (!modules.has(module.getId()) || !modules.get(module.getId()).isJsonObject()) {
-                    continue;
-                }
+                if (!modules.has(module.getId()) || !modules.get(module.getId()).isJsonObject()) continue;
                 JsonObject moduleData = modules.getAsJsonObject(module.getId());
-                if (moduleData.has("enabled")) {
+                if (restoreEnabledStates && moduleData.has("enabled")) {
                     module.setEnabled(moduleData.get("enabled").getAsBoolean());
                 }
                 if (moduleData.has("settings") && moduleData.get("settings").isJsonObject()) {
                     JsonObject settings = moduleData.getAsJsonObject("settings");
                     for (Setting<?> setting : module.getSettings()) {
-                        JsonElement value = settings.get(setting.getId());
-                        setting.readJson(value);
+                        setting.readJson(settings.get(setting.getId()));
                     }
                 }
             }
-
             if (root.has("hudLayout") && root.get("hudLayout").isJsonObject()) {
                 HudLayoutManager.apply(root.getAsJsonObject("hudLayout"));
             }
@@ -121,39 +110,28 @@ public final class ConfigManager {
             applying = false;
         }
     }
-
     private static JsonObject snapshot() {
         JsonObject root = new JsonObject();
-        root.addProperty("schemaVersion", 1);
+        root.addProperty("schemaVersion", 2);
         JsonObject modules = new JsonObject();
-
         for (VisualModule module : VisualRegistry.all()) {
             JsonObject moduleData = new JsonObject();
             moduleData.addProperty("enabled", module.isEnabled());
             JsonObject settings = new JsonObject();
-            for (Setting<?> setting : module.getSettings()) {
-                settings.add(setting.getId(), toJson(setting));
-            }
+            for (Setting<?> setting : module.getSettings()) settings.add(setting.getId(), toJson(setting));
             moduleData.add("settings", settings);
             modules.add(module.getId(), moduleData);
         }
-
         root.add("modules", modules);
         root.add("hudLayout", HudLayoutManager.snapshot());
         return root;
     }
-
     private static JsonElement toJson(Setting<?> setting) {
         Object value = setting.getValue();
-        if (value instanceof Boolean booleanValue) {
-            return new com.google.gson.JsonPrimitive(booleanValue);
-        }
-        if (value instanceof Number numberValue) {
-            return new com.google.gson.JsonPrimitive(numberValue);
-        }
+        if (value instanceof Boolean booleanValue) return new com.google.gson.JsonPrimitive(booleanValue);
+        if (value instanceof Number numberValue) return new com.google.gson.JsonPrimitive(numberValue);
         return com.google.gson.JsonNull.INSTANCE;
     }
-
     private static void writeAtomically(Path target, JsonObject content) throws IOException {
         Path temporary = target.resolveSibling(target.getFileName() + ".tmp");
         try (Writer writer = Files.newBufferedWriter(temporary)) {
@@ -165,7 +143,6 @@ public final class ConfigManager {
             Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
         }
     }
-
     private static Path profilePath(String name) {
         if (name == null || !SAFE_NAME.matcher(name).matches()) {
             throw new IllegalArgumentException("Profile names may contain 1-32 letters, digits, '_' or '-'.");

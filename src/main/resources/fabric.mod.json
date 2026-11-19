@@ -1,22 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "deadly",
-  "version": "${version}",
+  "version": "1.2.0",
   "name": "Deadly Visuals",
   "description": "A modular client-side visual customization suite for Minecraft 1.21.11.",
-  "authors": [
-    "iyou76108-prog"
-  ],
-  "contact": {
-    "sources": "https://github.com/iyou76108-prog/deadly"
-  },
+  "authors": ["iyou76108-prog"],
+  "contact": {"sources": "https://github.com/iyou76108-prog/deadly"},
   "license": "MIT",
   "environment": "client",
-  "entrypoints": {
-    "client": [
-      "com.iyou76108.deadly.DeadlyClient"
-    ]
-  },
+  "entrypoints": {"client": ["com.iyou76108.deadly.DeadlyClient"]},
   "depends": {
     "fabricloader": ">=0.19.2",
     "minecraft": "~1.21.11",
